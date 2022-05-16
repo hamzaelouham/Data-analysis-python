@@ -1,15 +1,14 @@
+from urllib import response
 import pandas as pd  # pip install pandas openpyxl
 import plotly.express as px  # pip install plotly-express
-from plotly.subplots import make_subplots
+from plotly.subplots import make_subplots 
 import plotly.graph_objects as go
 import streamlit as st  # pip install streamlit
-
 
 st.set_page_config(page_title="Sales Dashboard", page_icon=":bar_chart:", layout="wide")
 
 def getDataSets(arg):
     return pd.read_excel(arg)
-
 
 data = getDataSets('datasets.xls')
 
@@ -18,6 +17,13 @@ data = getDataSets('datasets.xls')
 data["Month"] = data['Order Date'].dt.month
 
 data['Month'] = pd.to_datetime(data['Month'], format='%m').dt.month_name().str.slice(stop=3)
+
+
+geoloctionsDF = pd.DataFrame()
+
+geoloctionsDF['city'] =  data['City'].unique()
+
+
 
 
 #ounth_data = data.groupby(['Month']).sum()['Sales']
@@ -151,6 +157,11 @@ sales_profit = px.bar(sales.groupby(by=['Month']).sum()['Profit'],
     template="plotly_white"
 )
 
+#plot states in the map
+
+statesLoctions = pd.read_csv('withLatLng.csv')
+
+st.map(statesLoctions)
 
 st.plotly_chart(fig_mounthly_sales)
 st.plotly_chart(sales_profit)
@@ -160,4 +171,3 @@ st.write("Container charts")
 st.plotly_chart(figDuont1)
 st.write("departement charts")
 st.plotly_chart(figDuont2)
-
